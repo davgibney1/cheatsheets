@@ -1,0 +1,30 @@
+Athena
+
+If you run this query in Athena, it will create this table under a db named 's3accesslogs' (must already have been created)
+
+CREATE EXTERNAL TABLE IF NOT EXISTS s3accesslogs.name_of_my_bucket(
+ BucketOwner string,
+ Bucket string,
+ RequestDateTime string,
+ RemoteIP string,
+ Requester string,
+ RequestID string,
+ Operation string,
+ Key string,
+ RequestURI_operation string,
+ RequestURI_key string,
+ RequestURI_httpProtoversion string,
+ HTTPstatus string,
+ ErrorCode string,
+ BytesSent int,
+ ObjectSize int,
+ TotalTime int,
+ TurnAroundTime int,
+ Referrer string,
+ UserAgent string,
+ VersionId string)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe'
+WITH SERDEPROPERTIES (
+ 'serialization.format' = '1',
+ 'input.regex' = '([^ ]*) ([^ ]*) \\[(.*?)\\] ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) \\\"([^ ]*) ([^ ]*) (- |[^ ]*)\\\" (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\"[^\"]*\") ([^ ]*)$'
+) LOCATION 's3://name_of_my_logs_bucket/s3access/name_of_my_bucket/'
